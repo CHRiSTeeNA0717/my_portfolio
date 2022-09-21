@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Urikake
+{% endblock %}
+
+{% block main %} 
+    <article>
+        <h2>ようこそ、売掛BOTの世界へ</h2><br>
+        <p>PMSからダウンロードした売掛のCSVを入れて、BOTを起動してネ</p>
+        <form enctype="multipart/form-data" action="/urikake/" method="post">{% csrf_token %}
+            <div class="input-group mb-3 w-auto">
+                <input type="file" class="form-control" name="file_urikake" id="file_urikake">
+                <input type="submit" class="input-group-text" for="file_urikake" value="BOT起動">
+            </div>
+        </form>
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show md-3" role="alert">
+          {{ message }}
+        </div>  
+        {% endfor %}
+    </article>
+{% endblock %}

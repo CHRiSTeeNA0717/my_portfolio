@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    New Input
+{% endblock %}
+
+{% block main %} 
+{% if user.username == "ゲスト" %}
+<h2>ゲスト：権限なし</h2>
+{% else %}
+    <div class="mb-3" style="text-align:left">
+        <article>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <p>光熱費は上書きできないので、BOTメニューのページでデータ削除で削除してからデータ入れ直してネ</p>
+            <form action="/newinput/" method="post">{% csrf_token %}
+                <h2>電気代（日付：<input class="w-auto" type="date" name="electric_date_start"> - <input class="w-auto" type="date" name="electric_date_end">）</h2>
+                <p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">部屋番号</th>
+                                <th scope="col">お客様番号</th>
+                                <th scope="col">金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>A</td>
+                                <td>52470500078220</td>
+                                <td><input class="form-control w-auto" name="amount_a" type="number"></td>
+                            </tr>
+                            <tr>
+                                <td>B</td>
+                                <td>52470500078180</td>
+                                <td><input class="form-control w-auto" name="amount_b" type="number"></td>
+                            </tr>
+                            <tr>
+                                <td>C/シェアスペース/2F</td>
+                                <td>52470500078160</td>
+                                <td><input class="form-control w-auto" name="amount_c" type="number"></td>
+                            </tr>
+                            <tr>
+                                <td>D</td>
+                                <td>52470500078190</td>
+                                <td><input class="form-control w-auto" name="amount_d" type="number"></td>
+                            </tr>
+                            <tr>
+                                <td>E</td>
+                                <td>52470500078200</td>
+                                <td><input class="form-control w-auto" name="amount_e" type="number"></td>
+                            </tr>
+                            <tr>
+                                <td>F</td>
+                                <td>52470500078210</td>
+                                <td><input class="form-control w-auto" name="amount_f" type="number"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><input class="btn btn-dark" type="submit" name="electric_save" value="電気代保存"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </p>
+            </form>
+        </article>
+        <article>
+            <form action="/newinput/" method="post">{% csrf_token %}
+                <h2>水道代（日付：<input class="w-auto" type="date" name="water_date_start"> - <input class="w-auto" type="date" name="water_date_end">）</h2>
+                <p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">お客様番号</th>
+                                <th scope="col">金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>###</td>
+                                <td><input class="form-control w-auto" name="amount_water" type="number"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td><input class="btn btn-dark" type="submit" name="water_save" value="水道代保存"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </p>
+            </form>
+        </article>
+        <article>
+            <form action="/newinput/" method="post">{% csrf_token %}
+                <h2>ガス代（日付：<input class="w-auto" type="date" name="gas_date_start"> - <input class="w-auto" type="date" name="gas_date_end">）</h2>
+                <p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">お客様番号</th>
+                                <th scope="col">金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>###</td>
+                                <td><input class="form-control w-auto" name="amount_gas" type="number"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td><input class="btn btn-dark" type="submit" name="gas_save" value="ガス代保存"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </p>
+            </form>
+        </article>
+    </div>
+{% endif %}
+{% endblock %} 

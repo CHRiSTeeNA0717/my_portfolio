@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <form action="/register/" method="post">
+        {% csrf_token %} 
+        <div class="mb-3">
+        <label>好きなユーザーネーム、とパスワードを入力してアカウントを作ってください。</label><br>
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="ユーザーネーム" type="text">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="phoneNumber" placeholder="0312345678" type="number" aria-describedby="phone">
+            <div id="phone" class="form-text">認証として、Twin-Lineの ”業務用” 電話番号を入れてください。</div>
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="パスワード（６文字以上）" type="password" required>
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="password" name="confirmPassword" placeholder="パスワード確認" type="password" required>
+        </div>
+        <button class="btn btn-dark" type="submit">アカウントを作る</button>
+    </form><br>
+    <div class="form-group">
+          {% for message in messages %}
+          <div class="alert alert-danger alert-dismissible fade show md-3" role="alert">
+            {{ message }}
+          </div>  
+          {% endfor %}
+    </div>
+{% endblock %}

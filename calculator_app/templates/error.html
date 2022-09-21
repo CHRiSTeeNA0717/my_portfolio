@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    ERROR
+{% endblock %}
+
+{% block main %} 
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Nothing to see here :)</p>
+    {% endif %}
+    
+    <p>
+        <a href="/newinput/"><button type="button" id="btn_back" class="btn btn-dark">入力に戻る</button></a>
+        <a href="/index/"><button type="button" id="btn_back" class="btn btn-dark">BOTメニューに戻る</button></a>
+    </p>
+
+{% endblock %}

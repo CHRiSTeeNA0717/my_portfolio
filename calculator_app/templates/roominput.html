@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    New Room
+{% endblock %}
+
+{% block main %} 
+    {% if user.username == "ゲスト" %}
+    <h2>ゲスト：権限なし</h2>
+    {% else %}
+        <article>
+            <h2>部屋</h2>
+            <div style="color: red;">
+                <p>空室の場合は部屋のデータを入力しないでネ<br>部屋を削除したい場合はその部屋の名前を“空室”や“None”を入れて保存してネ</p>
+            </div>
+            <form action="/roominput/" method="post">{% csrf_token %}
+                <div>
+                    <table class="table table-striped" id="table_room">
+                        <thead>
+                            <tr>
+                                <th scope="col">部屋番号</th>
+                                <th scope="col">名前</th>
+                                <th scope="col">日付から</th>
+                                <th scope="col">日付まで</th>
+                                <th scope="col"><input class="btn btn-secondary" type="button" id="button_clone_row" value="増殖"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="room">
+                                <td><input class="form-control w-auto" name="room0" type="text" placeholder="A-K"></td>
+                                <td><input class="form-control w-auto" name="name0" type="text" placeholder="名前"></td>
+                                <td><input class="form-control w-auto" name="room_date_start0" type="date"></td>
+                                <td><input class="form-control w-auto" name="room_date_end0" type="date"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><input class="btn btn-dark" type="submit" name="room_save" value="部屋データ保存"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </form>
+        </article>
+
+        <script type="text/javascript">
+            
+            $(function(){
+                var countTr = 1; // global var to implement the id num of cloned row
+
+                // clone and append rows
+                $("#table_room").on('click', 'input#button_clone_row', function() {
+                    var $tr = $(".room"); 
+
+                    // find all rows and clone the first one
+                    var allTrs = $tr.closest('tbody').find('tr');
+                    var firstTr = allTrs[0];
+                    var $clone = $(firstTr).clone();
+
+                    // go to every td to implement name attribute
+                    $clone.find('td').each(function(){
+                        var el = $(this).find(':first-child');
+                        var name = el.attr('name');
+                        if(name) {
+                            // get substring that exclude the last character which is the number
+                            var prefix = name.substr(0, (name.length-1));
+                            // asign the substring and global count into the name
+                            el.attr('name', prefix+(+countTr));
+                        }
+                    });
+
+                    // add a remove button to the end of the row
+                    if($clone.find('td').last().attr('type') != "button") {
+                    $clone.find('td').last().after('<td><input type="button" class="btn btn-outline-danger button_remove_row" value="減殖"></td>');
+                    };
+
+                    // increment of global count
+                    countTr++;
+
+                    // append the row to the end of the table
+                    $tr.closest('table').append($clone);
+                });
+
+                // remove row
+                $("#table_room").on('click', 'input.button_remove_row', function() {
+                    $(this).closest('tr').remove();
+                });
+            });
+
+            
+        </script>
+    {% endif %}
+{% endblock %}

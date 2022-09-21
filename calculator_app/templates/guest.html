@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <form action="/login/" method="post">
+        {% csrf_token %} 
+        <div class="mb-3">
+        <label>ゲストユーザーネームを入力してBOTへアクセスしましょう。</label><br>
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="ゲスト" type="text">
+        </div>
+        <button class="btn btn-dark" type="submit">ログイン</button>
+    </form><br>
+    <div class="form-group">
+    
+    {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show md-3" role="alert">
+            {{ message }}
+        </div>  
+    {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %} 
+    {% if user.is_authenticated %}
+        <h2>こんにちは、{{ user.username }}</h2><br>
+        <div class="mb-3">
+            {% if user.username == "ゲスト" %}
+                <p><strong>ゲストの方では、データ入力ができないため、データの照会のみできます</strong></p>
+            {% endif %}
+            <p>このアプリは、寮の光熱費を自動計算してくれます</p>
+            <p>使い方のわからない方は<a href="/manual/">マニュアル</a>を参考できます</p>
+            <p>そのまま進む方は<a href="/index">BOT Menu</a>に入って始めましょう</p>
+        </div>
+    {% else %}
+        <div>
+            <h2>こんにちは、Calculator BOT へようこそ</h2><br>
+            <div>
+                <p>管理員の方は<a href="/login/">管理員ログイン</a>でログインできます</p>
+                <p>アカウントを持っていない、光熱費の管理員になる方は<a href="/register/">管理員アカウントを登録</a>で登録できます</p>
+                <p>内容だけ確認したい、ゲストの方は<a href="/guest/">ゲストログイン</a>でログインできます</p>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %} 

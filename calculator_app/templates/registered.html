@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Registered
+{% endblock %}
+
+{% block main %} 
+<script>
+    setTimeout(function(){
+       window.location.href = '/';
+    }, 3000);
+ </script>
+ <p>ユーザー <strong>{{ username }}</strong> のアカウントを成功に作れたぞ</p>
+ <p>3秒後にホームページへ戻るネ</p>
+{% endblock %} 

@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Inputed
+{% endblock %}
+
+{% block main %} 
+   {% if electric or water or gas %}
+      <script>
+         setTimeout(function(){
+            window.location.href = '/newinput/';
+         }, 3000);
+      </script>
+      <p>
+         {{ electric }}{{ water }}{{ gas }} が保存されたぞ
+      </p>
+      <p>3秒後にページへ戻るネ</p>
+      <p>戻られなかったら<a href="/newinput/">ここ</a>を押してネ</p>
+   {% elif deleted %}
+      <script>
+         setTimeout(function(){
+            window.location.href = '/index/';
+         }, 4000);
+      </script>
+      <p>{{ deleted }}</p>
+      <p>4秒後にページへ戻るネ</p>
+      <p>戻られなかったら<a href="/index/">ここ</a>を押してネ</p>
+   {% else %}
+      <table class="table table-striped">
+         <thead>
+            <tr>
+               <th scope="col">保存成功のデータ</th>
+            </tr>
+         </thead>
+         <tbody>
+            {% for i in room_data %}
+               <tr>
+                  {% for key, value in i.items %}
+                     <td>{{ value }}</td>
+                  {% endfor %}
+               </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+      <table class="table table-striped">
+         <thead>
+            <tr>
+               <th scope="col">保存失敗のデータ</th>
+            </tr>
+         </thead>
+         <tbody>
+            {% for i in invalid_data %}
+               <tr>
+                  {% for key, value in i.items %}
+                     <td>{{ value }}</td>
+                  {% endfor %}
+               </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+      <br>
+      <a href="/roominput/"><button class="btn btn-secondary">戻る</button></a>
+   {% endif %}
+
+{% endblock %} 

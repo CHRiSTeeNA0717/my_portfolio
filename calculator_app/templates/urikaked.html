@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Urikake
+{% endblock %}
+
+{% block main %} 
+    <h2>売掛件数</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">OTA</th>
+                <th scope="col">件数</th>
+                <th scope="col">金額</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dicts in list_urikake %}
+                {% if forloop.last != True %}
+                    <tr>
+                        {% for value in dicts.values %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% else %}
+                    </tbody>
+                    <tfoot>
+                        {% for dicts in list_urikake %}
+                            {% if forloop.last == True %}
+                                <tr>
+                                    {% for value in dicts.values %}
+                                        <td>{{ value }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tfoot>
+                {% endif %}
+            {% endfor %}
+        </table><br>
+        <a href="/urikake/"><button class="btn btn-secondary">戻る</button></a>
+{% endblock %}
