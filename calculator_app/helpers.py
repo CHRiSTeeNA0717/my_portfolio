@@ -163,6 +163,10 @@ def calculation(type,obj):
         else:
             payment.append(room)
         
+    # create a list to store the index of list "payment" for room with 0 yen payment
+    # so that we can pop those index later
+    room_zero_payment = []
+
     for i in range(len(payment)):
         try:
             if (payment[i]["name"] is None) or payment[i]["name"] == "None" or rooms[i][chr(num)] == "空室":
@@ -173,9 +177,10 @@ def calculation(type,obj):
                 if payment[i]["date_start"] == rooms[0]["date_room"] and payment[i]["date_end"] == rooms[len(rooms)-1]["date_room"] and type == "electric":
                     payment[i]["payment"] = empty_room_payment
 
-                # if the room is empty, it should be 0 yen (after applying empty_room_payment)
+                # if the room payment is 0 yen, than we remove the room from list
+                # add the index number to room_zero_payment and pop the list "payment" after this loop finish
                 if payment[i]["payment"] == 0:
-                    payment.pop(i)
+                    room_zero_payment.append(i)
 
         # if we remove an item in the list payment, the for loop will eventually go beyond the index range
         # so we have to break the loop from that error
