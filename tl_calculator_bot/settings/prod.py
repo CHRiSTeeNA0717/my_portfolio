@@ -1,5 +1,4 @@
 from tl_calculator_bot.settings.common import *
-from tl_calculator_bot.settings.dev import SECRET_KEY
 
 DEBUG = False
 
