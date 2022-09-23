@@ -180,12 +180,21 @@ def calculation(type,obj):
                 # if the room payment is 0 yen, than we remove the room from list
                 # add the index number to room_zero_payment and pop the list "payment" after this loop finish
                 if payment[i]["payment"] == 0:
-                    room_zero_payment.append(i)
+                    
+                    # inset to 0 index of the list, so that we have a reversed index of list "payment" 
+                    # so that it's easier to pop them
+                    room_zero_payment.insert(0, i)
 
         # if we remove an item in the list payment, the for loop will eventually go beyond the index range
         # so we have to break the loop from that error
         except IndexError:
             break
+    
+    for i in range(len(room_zero_payment)):
+
+        # pop the index of list "payment" which is in the list "room_zero_payment"
+        # "room_zero_payment" stores index number of list "payment" in reverse so no index error
+        payment.pop(room_zero_payment[i])
 
     return payment
 
