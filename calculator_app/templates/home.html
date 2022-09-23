@@ -9,11 +9,12 @@
         <h2>こんにちは、{{ user.username }}</h2><br>
         <div class="mb-3">
             {% if user.username == "ゲスト" %}
-                <p><strong>ゲストの方では、データ入力ができないため、データの照会のみできます</strong></p>
+                <p><strong>お知らせ：ゲストの方では、データ入力ができないため、データの照会のみできます</strong></p>
             {% endif %}
             <p>このアプリは、寮の光熱費を自動計算してくれます</p>
             <p>使い方のわからない方は<a href="/manual/">マニュアル</a>を参考できます</p>
             <p>そのまま進む方は<a href="/index">BOT Menu</a>に入って始めましょう</p>
+            <p>ログアウトする方は<a href="/logout">ログアウト</a></p>
         </div>
     {% else %}
         <div>

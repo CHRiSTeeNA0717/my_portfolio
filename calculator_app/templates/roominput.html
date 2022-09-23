@@ -6,12 +6,12 @@
 
 {% block main %} 
     {% if user.username == "ゲスト" %}
-    <h2>ゲスト：権限なし</h2>
+        <h2>ゲスト：権限なし</h2>
     {% else %}
         <article>
             <h2>部屋</h2>
             <div style="color: red;">
-                <p>空室の場合は部屋のデータを入力しないでネ<br>部屋を削除したい場合はその部屋の名前を“空室”や“None”を入れて保存してネ</p>
+                <p>空室の場合は部屋のデータを入力しないこと<br>部屋を削除したい場合はその部屋の名前を“空室”や“None”を入れて保存してネ</p>
             </div>
             <form action="/roominput/" method="post">{% csrf_token %}
                 <div>

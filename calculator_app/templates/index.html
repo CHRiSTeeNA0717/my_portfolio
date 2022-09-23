@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %} 
-        <h2>ようこそ、BOTの世界へ</h2>
+        <h2>BOT MENU</h2>
 
         <div class="mb-3">
             <!-- Button trigger 支払い照会 modal -->
@@ -192,7 +192,7 @@
         <div class="mb-3">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#inputModal">
-                光熱費データを入力
+                光熱費データ入力
             </button>
             
             <!-- Modal -->
@@ -200,14 +200,14 @@
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="inputModalLabel">必要なものは揃っているかい？</h5>
+                    <h5 class="modal-title" id="inputModalLabel">必要なものは揃っている？</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <ul style="text-align: left;">
                             <li>電気代の振込票</li>
-                            <li>水道代検針票（あれば）</li>
-                            <li>ガス代請求書（あれば）</li>
+                            <li>水道代検針票</li>
+                            <li>ガス代請求書</li>
                         </ul>
                     </div>
                     <div class="modal-footer">
@@ -221,7 +221,7 @@
 
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#roominputModal">
-                部屋データを入力
+                部屋データ入力
             </button>
             
             <!-- Modal -->
@@ -229,13 +229,13 @@
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="roominputModalLabel">新しいデータは揃っているかい？</h5>
+                    <h5 class="modal-title" id="roominputModalLabel">データは揃っている？</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <ul style="text-align: left;">
                             <li>ルームリスト</li>
-                            <li>入寮/退寮日付（覚えているならいらないかな）</li>
+                            <li>入寮/退寮日付</li>
                         </ul>
                     </div>
                     <div class="modal-footer">
@@ -248,4 +248,17 @@
         </div>
         
     {% endif %}
+
+    <div><strong>
+        <p>支払い照会：光熱費を月別で部屋ごとの支払い金額を見れる</p>
+        <p>部屋リスト照会：選択した期間内の部屋に住んでる人を確認できる</p>
+        
+        {% if user.username != "ゲスト" %}
+            <p>データ削除：光熱費を月別で削除（部屋の名前ではない）</p>
+            <p>光熱費データ入力：電気代、水道代、ガス代入力</p>
+            <p>部屋データ入力：部屋利用者名前と期間を入力</p>
+        {% endif %}
+
+    </strong></div>
+
 {% endblock %} 
