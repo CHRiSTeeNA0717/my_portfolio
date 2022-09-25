@@ -29,7 +29,7 @@ def login(request):
         # Guest login
         if len(request.POST) < 3:
 
-            user = auth.authenticate(username=request.POST["username"], password="guestlogin")
+            user = auth.authenticate(username="Guest", password="guestlogin")
             if user == None:
                 messages.info(request, "開発者がこのアクセスを拒否しています")
                 return render(request, "guest.html")

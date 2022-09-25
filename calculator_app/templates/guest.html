@@ -8,10 +8,7 @@
     <form action="/login/" method="post">
         {% csrf_token %} 
         <div class="mb-3">
-        <label>ゲストユーザーネームを入力してBOTへアクセスしましょう。</label><br>
-        </div>
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="ゲスト" type="text">
+        <label>ゲストログイン</label><br>
         </div>
         <button class="btn btn-dark" type="submit">ログイン</button>
     </form><br>
