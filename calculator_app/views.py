@@ -37,7 +37,7 @@ def login(request):
             request.session.set_expiry(600)
             auth.login(request, user)
 
-            return redirect(home)
+            return redirect(index)
 
         username = request.POST["username"]
         pw = request.POST["password"]
@@ -48,7 +48,7 @@ def login(request):
             request.session.set_expiry(1800)
             auth.login(request, user)
 
-            return redirect(home)
+            return redirect(index)
 
         else:
             
@@ -75,7 +75,7 @@ def index(request):
     electric = Electric.objects.all().values().order_by('date_electric_start')
     water = Water.objects.all().values().order_by('date_water_start')
     gas = Gas.objects.all().values().order_by('date_gas_start')
-    return render(request, "index.html", context={"electric":electric, "water":water, "gas":gas})
+    return render(request, "index.html", context={"electric":electric, "water":water, "gas":gas, "index":"index"})
 
 def register(request):
 
@@ -110,7 +110,10 @@ def register(request):
 @login_required(login_url='/login/')
 def newinput(request):
     if request.method != "POST":
-        return render(request, "newinput.html")
+        electric = Electric.objects.all().values().order_by('date_electric_start')
+        water = Water.objects.all().values().order_by('date_water_start')
+        gas = Gas.objects.all().values().order_by('date_gas_start')
+        return render(request, "newinput.html", context={"electric":electric, "water":water, "gas":gas})
     else:
         if "electric_save" in request.POST:
 
@@ -251,7 +254,7 @@ def newinput(request):
 @login_required(login_url='/login/')
 def history(request):
     if request.method != "POST":
-        return redirect(home)
+        return redirect(index)
     else:
         if "search" in request.POST:
             if request.POST["search"] == "電気代検索":
@@ -367,7 +370,10 @@ def history(request):
 @login_required(login_url='/login/')
 def roominput(request):
     if request.method != "POST":
-        return render(request, "roominput.html")
+        electric = Electric.objects.all().values().order_by('date_electric_start')
+        water = Water.objects.all().values().order_by('date_water_start')
+        gas = Gas.objects.all().values().order_by('date_gas_start')
+        return render(request, "roominput.html", context={"electric":electric, "water":water, "gas":gas})
     else:
         # check if POST is accessed by clicking the save room data button
         if not request.POST["room_save"]:

@@ -17,7 +17,7 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            <p>光熱費は上書きできないので、BOTメニューのページでデータ削除で削除してからデータ入れ直してネ</p>
+            <p>光熱費は上書きできないので、削除してからデータ入れ直してネ</p>
             <form action="/newinput/" method="post">{% csrf_token %}
                 <h2>電気代（日付：<input class="w-auto" type="date" name="electric_date_start"> - <input class="w-auto" type="date" name="electric_date_end">）</h2>
                 <p>

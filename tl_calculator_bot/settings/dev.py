@@ -4,6 +4,7 @@ from tl_calculator_bot.settings.common import *
 # this file should be added to .gitignore
 
 DEBUG = True
+SECRET_KEY="django-insecure-t1l34ghf%3(=ngmpe6y1#erf(l+^bn0_9x#pj!a1fjgks"
 
 DATABASES = {
     'default': {

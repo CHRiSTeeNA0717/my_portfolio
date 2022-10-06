@@ -5,14 +5,35 @@
 {% endblock %}
 
 {% block main %} 
-        <h2>BOT MENU</h2>
+    <h2>BOT MENU</h2><br><br>
+
+    <div id="home">
+    {% if user.username != "ゲスト" %}
+        <div class="mb-3">
+
+            <h4>新規入力（CREATE, UPDATE）</h4>
+
+            <!-- Button trigger 光熱費データ入力 modal -->
+            <a href="/newinput/"><button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inputModal" style="background-color: #114D60;">
+                光熱費データ入力
+            </button></a>
+            
+            <!-- Button trigger 部屋データ入力 modal -->
+            <a href="/roominput/"><button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#roominputModal" style="background-color: #114D60;">
+                部屋データ入力
+            </button></a> 
+        </div>
+    {% endif %}
 
         <div class="mb-3">
+
+            <h4>データ照会（READ）</h4>
+
             <!-- Button trigger 支払い照会 modal -->
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#queryModal" style="background-color: #114D60;">
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#queryModal">
                 支払い照会
             </button>
-            
+
             <!-- 支払い照会 Modal -->
             <div class="modal fade" id="queryModal" tabindex="-1" aria-labelledby="queryModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -84,10 +105,10 @@
             </div>
 
             <!-- Button trigger 部屋リスト照会 Modal-->
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#queryRoomModal" style="background-color: #114D60;">
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#queryRoomModal">
                 部屋リスト照会
             </button>
-            
+
             <!-- 部屋リスト照会 Modal -->
             <div class="modal fade" id="queryRoomModal" tabindex="-1" aria-labelledby="queryRoomModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -112,153 +133,87 @@
 
     {% if user.username != "ゲスト" %}
         <div class="mb-3">
-            <!-- Button trigger modal -->
+
+            <h4>データ削除（DELETE）</h4>
+
+            <!-- Button trigger データ削除 modal -->
             <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#queryModal2">
-                データ削除
+                光熱費データ削除
             </button>
-            
-            <!-- Modal -->
+
+            <!--データ削除 Modal -->
             <div class="modal fade" id="queryModal2" tabindex="-1" aria-labelledby="queryModalLabel2" aria-hidden="true">
                 <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="queryModalLabel2">検索したいカテゴリーを選択してネ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="queryModalLabel2">削除したいカテゴリーを選択してネ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p style="color: red;">削除ボタンをクリックしたら、データが削除されるので<br>気を付けて日付を選んでネ</p>
+                            <ul style="text-align: left;">
+                                <li>電気代<span>
+                                    <form action="/history/" method="post">{% csrf_token %}
+                                        <div class="input-group">
+                                            <select class="form-select" name="selectElectricMonth" id="selectElectricMonth" aria-label="Example select with button addon">
+                                                <option disabled>月を選択してネ</option>
+                                                    {% for i in electric %}
+                                                        <option value="{{ i.date_electric_start }}|{{ i.date_electric_end }}">{{ i.date_electric_start }} から {{ i.date_electric_end }} まで</option>
+                                                    {% endfor %}
+                                            </select>
+                                            {% if electric %}
+                                                <input class="btn btn-dark" type="submit" name="electric_del" value="電気代削除">
+                                            {% else %}
+                                                <input class="btn btn-outline-dark" type="submit" name="electric_del" value="電気代削除" disabled>
+                                            {% endif %}
+                                        </div>
+                                    </form></span>
+                                </li>
+                                <li>水道代<span>
+                                    <form action="/history/" method="post">{% csrf_token %}
+                                        <div class="input-group">
+                                            <select class="form-select" name="selectWaterMonth" id="selectWaterMonth" aria-label="Example select with button addon">
+                                                <option disabled>月を選択してネ</option>
+                                                    {% for i in water %}
+                                                        <option value="{{ i.date_water_start }}|{{ i.date_water_end }}">{{ i.date_water_start }} から {{ i.date_water_end }} まで</option>
+                                                    {% endfor %}
+                                            </select>
+                                            {% if water %}
+                                                <input class="btn btn-dark" type="submit" name="water_del" value="水道代削除">
+                                            {% else %}
+                                                <input class="btn btn-outline-dark" type="submit" name="water_del" value="水道代削除" disabled>
+                                            {% endif %}
+                                        </div>
+                                    </form></span>
+                                </li>
+                                <li>ガス代<span>
+                                    <form action="/history/" method="post">{% csrf_token %}
+                                        <div class="input-group">
+                                            <select class="form-select" name="selectGasMonth" id="selectGasMonth" aria-label="Example select with button addon">
+                                                <option disabled>月を選択してネ</option>
+                                                    {% for i in gas %}
+                                                        <option value="{{ i.date_gas_start }}|{{ i.date_gas_end }}">{{ i.date_gas_start }} から {{ i.date_gas_end }} まで</option>
+                                                    {% endfor %}
+                                            </select>
+                                            {% if gas %}
+                                                <input class="btn btn-dark" type="submit" name="gas_del" value="ガス代削除">
+                                            {% else %}
+                                                <input class="btn btn-outline-dark" type="submit" name="gas_del" value="ガス代削除" disabled>
+                                            {% endif %}
+                                        </div>
+                                    </form></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">戻る</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <p style="color: red;">削除ボタンをクリックしたら、データが削除されるので<br>気を付けて日付を選んでネ</p>
-                        <ul style="text-align: left;">
-                            <li>電気代<span>
-                                <form action="/history/" method="post">{% csrf_token %}
-                                    <div class="input-group">
-                                        <select class="form-select" name="selectElectricMonth" id="selectElectricMonth" aria-label="Example select with button addon">
-                                            <option disabled>月を選択してネ</option>
-                                                {% for i in electric %}
-                                                    <option value="{{ i.date_electric_start }}|{{ i.date_electric_end }}">{{ i.date_electric_start }} から {{ i.date_electric_end }} まで</option>
-                                                {% endfor %}
-                                        </select>
-                                        {% if electric %}
-                                            <input class="btn btn-dark" type="submit" name="electric_del" value="電気代削除">
-                                        {% else %}
-                                            <input class="btn btn-outline-dark" type="submit" name="electric_del" value="電気代削除" disabled>
-                                        {% endif %}
-                                    </div>
-                                </form></span>
-                            </li>
-                            <li>水道代<span>
-                                <form action="/history/" method="post">{% csrf_token %}
-                                    <div class="input-group">
-                                        <select class="form-select" name="selectWaterMonth" id="selectWaterMonth" aria-label="Example select with button addon">
-                                            <option disabled>月を選択してネ</option>
-                                                {% for i in water %}
-                                                    <option value="{{ i.date_water_start }}|{{ i.date_water_end }}">{{ i.date_water_start }} から {{ i.date_water_end }} まで</option>
-                                                {% endfor %}
-                                        </select>
-                                        {% if water %}
-                                            <input class="btn btn-dark" type="submit" name="water_del" value="水道代削除">
-                                        {% else %}
-                                            <input class="btn btn-outline-dark" type="submit" name="water_del" value="水道代削除" disabled>
-                                        {% endif %}
-                                    </div>
-                                </form></span>
-                            </li>
-                            <li>ガス代<span>
-                                <form action="/history/" method="post">{% csrf_token %}
-                                    <div class="input-group">
-                                        <select class="form-select" name="selectGasMonth" id="selectGasMonth" aria-label="Example select with button addon">
-                                            <option disabled>月を選択してネ</option>
-                                                {% for i in gas %}
-                                                    <option value="{{ i.date_gas_start }}|{{ i.date_gas_end }}">{{ i.date_gas_start }} から {{ i.date_gas_end }} まで</option>
-                                                {% endfor %}
-                                        </select>
-                                        {% if gas %}
-                                            <input class="btn btn-dark" type="submit" name="gas_del" value="ガス代削除">
-                                        {% else %}
-                                            <input class="btn btn-outline-dark" type="submit" name="gas_del" value="ガス代削除" disabled>
-                                        {% endif %}
-                                    </div>
-                                </form></span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">戻る</button>
-                    </div>
-                </div>
                 </div>
             </div>
+
         </div>
-
-        <div class="mb-3">
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#inputModal">
-                光熱費データ入力
-            </button>
-            
-            <!-- Modal -->
-            <div class="modal fade" id="inputModal" tabindex="-1" aria-labelledby="inputModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="inputModalLabel">必要なものは揃っている？</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ul style="text-align: left;">
-                            <li>電気代の振込票</li>
-                            <li>水道代検針票</li>
-                            <li>ガス代請求書</li>
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">戻る</button>
-                    <a href="/newinput/"><button type="button" id="btn_go_newinput" class="btn btn-dark">進む</button></a>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#roominputModal">
-                部屋データ入力
-            </button>
-            
-            <!-- Modal -->
-            <div class="modal fade" id="roominputModal" tabindex="-1" aria-labelledby="roominputModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="roominputModalLabel">データは揃っている？</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ul style="text-align: left;">
-                            <li>ルームリスト</li>
-                            <li>入寮/退寮日付</li>
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">戻る</button>
-                    <a href="/roominput/"><button type="button" id="btn_go_roominput" class="btn btn-dark">進む</button></a>
-                    </div>
-                </div>
-                </div>
-            </div>
-        </div>
-        
     {% endif %}
 
-    <div><strong>
-        <p>支払い照会：光熱費を月別で部屋ごとの支払い金額を見れる</p>
-        <p>部屋リスト照会：選択した期間内の部屋に住んでる人を確認できる</p>
-        
-        {% if user.username != "ゲスト" %}
-            <p>データ削除：光熱費を月別で削除（部屋の名前ではない）</p>
-            <p>光熱費データ入力：電気代、水道代、ガス代入力</p>
-            <p>部屋データ入力：部屋利用者名前と期間を入力</p>
-        {% endif %}
-
-    </strong></div>
-
+    </div>
 {% endblock %} 

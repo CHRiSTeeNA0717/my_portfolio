@@ -5,160 +5,52 @@
 {% endblock %}
 
 {% block main %} 
-    <div class="mb-3">
-        <!-- Button trigger 支払い照会 modal -->
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#queryModal" style="background-color: #114D60;">
-            支払い照会
-        </button>
-        
-        <!-- 支払い照会 Modal -->
-        <div class="modal fade" id="queryModal" tabindex="-1" aria-labelledby="queryModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="queryModalLabel">検索したいカテゴリーを選択してネ</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <ul style="text-align: left;">
-                        <li>電気代<span>
-                            <form action="/history/" method="post">{% csrf_token %}
-                                <div class="input-group">
-                                    <select class="form-select" name="selectElectricMonth" id="selectElectricMonth" aria-label="Example select with button addon">
-                                        <option disabled>月を選択してネ</option>
-                                            {% for i in electric %}
-                                                <option value="{{ i.date_electric_start }}|{{ i.date_electric_end }}">{{ i.date_electric_start }} から {{ i.date_electric_end }} まで</option>
-                                            {% endfor %}
-                                    </select>
-                                    {% if electric %}
-                                        <input class="btn btn-dark" type="submit" name="search" value="電気代検索">
-                                    {% else %}
-                                        <input class="btn btn-dark" type="submit" name="search" value="電気代検索" disabled>
-                                    {% endif %}
-                                </div>
-                            </form></span>
-                        </li>
-                        <li>水道代<span>
-                            <form action="/history/" method="post">{% csrf_token %}
-                                <div class="input-group">
-                                    <select class="form-select" name="selectWaterMonth" id="selectWaterMonth" aria-label="Example select with button addon">
-                                        <option disabled>月を選択してネ</option>
-                                            {% for i in water %}
-                                                <option value="{{ i.date_water_start }}|{{ i.date_water_end }}">{{ i.date_water_start }} から {{ i.date_water_end }} まで</option>
-                                            {% endfor %}
-                                    </select>
-                                    {% if water %}
-                                        <input class="btn btn-dark" type="submit" name="search" value="水道代検索">
-                                    {% else %}
-                                        <input class="btn btn-outline-dark" type="submit" name="search" value="水道代検索" disabled>
-                                    {% endif %}
-                                </div>
-                            </form></span>
-                        </li>
-                        <li>ガス代<span>
-                            <form action="/history/" method="post">{% csrf_token %}
-                                <div class="input-group">
-                                    <select class="form-select" name="selectGasMonth" id="selectGasMonth" aria-label="Example select with button addon">
-                                        <option disabled>月を選択してネ</option>
-                                            {% for i in gas %}
-                                                <option value="{{ i.date_gas_start }}|{{ i.date_gas_end }}">{{ i.date_gas_start }} から {{ i.date_gas_end }} まで</option>
-                                            {% endfor %}
-                                    </select>
-                                    {% if gas %}
-                                        <input class="btn btn-dark" type="submit" name="search" value="ガス代検索">
-                                    {% else %}
-                                        <input class="btn btn-outline-dark" type="submit" name="search" value="ガス代検索" disabled>
-                                    {% endif %}
-                                </div>
-                            </form></span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">戻る</button>
-                </div>
-            </div>
-            </div>
-        </div>
-
-        <!-- Button trigger 部屋リスト照会 Modal-->
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#queryRoomModal" style="background-color: #114D60;">
-            部屋リスト照会
-        </button>
-        
-        <!-- 部屋リスト照会 Modal -->
-        <div class="modal fade" id="queryRoomModal" tabindex="-1" aria-labelledby="queryRoomModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="queryRoomModalLabel">検索したい日付を選択してネ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="/history/" class="form-control w-auto" method="post">{% csrf_token %}
-                    <div class="modal-body">
-                        検索期間：<input name="room_date_start" type="date"> から<input name="room_date_end" type="date"> まで
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">戻る</button>
-                        <input class="btn btn-dark" type="submit" name="room_query" value="部屋リスト検索">
-                    </div>
-                </form>
-            </div>
-            </div>
-        </div>
-        
-    </div>
-
     <!-- query data below -->
-    <div style="text-align:left">
-        <p><strong>{{ type }}: {{ month_start }} - {{ month_end }}<br>合計：{{ total_amount }}</strong></p>
-    </div>
-    <div>
-        <table class="table table-striped">
-            <thead>
-                {% if "room_query" in request.POST %}
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">日付</th>
-                    <th scope="col">A</th>
-                    <th scope="col">B</th>
-                    <th scope="col">C</th>
-                    <th scope="col">D</th>
-                    <th scope="col">E</th>
-                    <th scope="col">F</th>
-                    <th scope="col">G</th>
-                    <th scope="col">H</th>
-                    <th scope="col">I</th>
-                    <th scope="col">J</th>
-                    <th scope="col">K</th>
-                </tr>
-                {% else %}
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">名前</th>
-                    <th scope="col">部屋</th>
-                    <th scope="col">金額</th>
-                    <th scope="col">期間から</th>
-                    <th scope="col">期間まで</th>
-                </tr>
-                {% endif %}
-            </thead>
-            <tbody>
-                {% for i in query %}
+    <div style="background-color: white;">
+        <div style="text-align:left;">
+            <p><strong>{{ type }}: {{ month_start }} - {{ month_end }}<br>合計：{{ total_amount }}</strong></p>
+        </div>
+        <div>
+            <table class="table table-striped">
+                <thead>
+                    {% if "room_query" in request.POST %}
                     <tr>
-                        <td>{{ forloop.counter }}</td>
-                        {% for value in i.values %}
-                            <td>{{ value }}</td>
-                        {% endfor %}
+                        <th scope="col">#</th>
+                        <th scope="col">日付</th>
+                        <th scope="col">A</th>
+                        <th scope="col">B</th>
+                        <th scope="col">C</th>
+                        <th scope="col">D</th>
+                        <th scope="col">E</th>
+                        <th scope="col">F</th>
+                        <th scope="col">G</th>
+                        <th scope="col">H</th>
+                        <th scope="col">I</th>
+                        <th scope="col">J</th>
+                        <th scope="col">K</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% else %}
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">部屋</th>
+                        <th scope="col">金額</th>
+                        <th scope="col">期間から</th>
+                        <th scope="col">期間まで</th>
+                    </tr>
+                    {% endif %}
+                </thead>
+                <tbody>
+                    {% for i in query %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            {% for value in i.values %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <p>
-        <a href="/newinput/"><button type="button" id="btn_back" class="btn btn-dark">ビル入力に戻る</button></a>
-        <a href="/roominput/"><button type="button" id="btn_back" class="btn btn-dark">部屋入力に戻る</button></a>
-        <a href="/"><button type="button" id="btn_back" class="btn btn-outline-dark">ホームに戻る</button></a>
-    </p>
 {% endblock %}
