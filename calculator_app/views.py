@@ -261,9 +261,12 @@ def history(request):
                 data = request.POST["selectElectricMonth"].split("|")
                 try:
                     date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
+
+                # when the month is abbr and cannot be read by %B, remove the "." at the end of month and read it with %b, 
+                # but SEPT has to be changed to SEP
                 except ValueError:
                     data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                    date_start = datetime.datetime.strptime(data[0], '%b %d, %Y').strftime('%Y-%m-%d')
+                    date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
                 room = calculate_bill("electric", date_start)
                 # return is at the end of this function
 
