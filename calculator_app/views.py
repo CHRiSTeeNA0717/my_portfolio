@@ -276,7 +276,7 @@ def history(request):
                     date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
                 except ValueError:
                     data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                    date_start = datetime.datetime.strptime(data[0], '%b %d, %Y').strftime('%Y-%m-%d')
+                    date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
                 room = calculate_bill("water", date_start)
                 # return is at the end of this function
 
@@ -286,7 +286,7 @@ def history(request):
                     date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
                 except ValueError:
                     data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                    date_start = datetime.datetime.strptime(data[0], '%b %d, %Y').strftime('%Y-%m-%d')
+                    date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
                 room = calculate_bill("gas", date_start)
                 # return is at the end of this function
 
