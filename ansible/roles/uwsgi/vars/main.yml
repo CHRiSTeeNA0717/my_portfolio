@@ -1,0 +1,4 @@
+app_log_root: "/var/log/my_app"
+app_root: "/var/www/my_app"
+uwsgi_vassals_root: "/etc/uwsgi/vassals"
+uwsgi_emperor: "uwsgi --emperor {{ uwsgi_vassals_root }} --uid root --gid root --daemonize {{ app_log_root }}/uwsgi-emperor.log"

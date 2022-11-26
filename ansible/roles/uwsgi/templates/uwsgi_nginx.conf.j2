@@ -1,0 +1,31 @@
+upstream django {
+                server unix:/{{ app_root }}/tl_calculator_bot.sock; # for a file socket
+}
+
+# configuration of the server
+server {
+        # the domain name it will serve for
+        server_name {{ ec2_ip }} {{ alb_dns }};
+
+        # the port server listen to
+        listen      80;
+        charset     utf-8;
+
+        # max upload size
+        client_max_body_size 75M;   # adjust to taste
+
+        # Django media
+        location /media/  {
+                alias /var/www/media/;  # your Django project's media files - amend as required
+        }
+
+        location /static/ {
+                alias /var/www/static/; # your Django project's static files - amend as required
+        }
+
+        # Finally, send all non-media requests to the Django server.
+        location / {
+                uwsgi_pass  django;
+                include     {{ app_root }}/tl_calculator_bot/uwsgi_params; # the uwsgi_params file you installed
+        }
+}

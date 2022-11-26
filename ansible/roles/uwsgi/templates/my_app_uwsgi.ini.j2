@@ -1,0 +1,24 @@
+[uwsgi]
+
+# Django-related settings
+# the base directory (full path)
+chdir           = {{ app_root }}
+# Django's wsgi file
+module          = tl_calculator_bot.wsgi
+# the virtualenv (full path)
+# no virtual environment so comment out below
+# home            = /home/ec2-user/env/
+
+# process-related settings
+# master
+master          = true
+# maximum number of worker processes
+processes       = 10
+# the socket (use the full path to be safe
+socket          = {{ app_root }}/tl_calculator_bot.sock
+# ... with appropriate permissions - may be needed
+chmod-socket    = 664
+chown-socket	= ec2-user:ec2-user
+
+# clear environment on exit
+vacuum          = true

@@ -1,0 +1,59 @@
+---
+
+# tasks for uwsgi
+
+- name: create log dir for uwsgi
+  file:
+    state: directory
+    path: "{{ app_log_root }}/"
+    group: "ec2-user"
+    owner: "ec2-user"
+
+- name: create nginx conf file for uwsgi
+  template: 
+    src: uwsgi_nginx.conf.j2
+    dest: /etc/nginx/conf.d/uwsgi_nginx.conf
+
+- name: add line into nginx.conf for long aws alb dns
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: "http {"
+    line: "server_names_hash_bucket_size 96;"
+
+- name: change nginx user
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: "^user " # Don't forget the whitespace after "user "
+    insertafter: "^#user "
+    line: user ec2-user; # Don't forget the semi-colon behind
+
+- name: Deploy uwsgi.ini file
+  template:
+    src: my_app_uwsgi.ini.j2
+    dest: "{{ app_root }}/my_app_uwsgi.ini"
+
+- file: 
+    state: directory
+    path: "{{ uwsgi_vassals_root }}"
+
+- name: symlink uwsgi ini file from my app dir to vassals
+  file:
+    src: "{{ app_root }}/my_app_uwsgi.ini"
+    dest: "{{ uwsgi_vassals_root }}/my_app_uwsgi.ini"
+    state: link
+
+- name: add command to /etc/rc.local for uwsgi to startup on boot
+  lineinfile:
+    path: /etc/rc.local
+    insertbefore: "exit 0"
+    line: "{{ uwsgi_emperor }}"
+
+- name: change permission of file after inserting /etc/rc.loacl
+  file:
+    path: "/etc/rc.d/rc.local"
+    mode: "+x"
+
+- name: run uwsgi emperor mode
+  shell: bash -lc "{{ uwsgi_emperor }}"
+  notify:
+    - Restart and enable nginx

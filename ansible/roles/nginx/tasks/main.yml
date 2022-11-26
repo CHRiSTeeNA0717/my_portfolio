@@ -1,0 +1,15 @@
+---
+# tasks file for nginx
+
+# enable nginx repo
+- name: Enable amzn2extra-nginx1.12 repository
+  shell: amazon-linux-extras enable nginx1.12
+  changed_when: false # shell module will always return changed so we don't count this as changed
+
+- name: Install Nginx packages from amazon-linux-extras
+  yum:
+    name: nginx
+    state: present
+
+# Do not start or restart nginx first
+# Restart nginx after django configurations are over

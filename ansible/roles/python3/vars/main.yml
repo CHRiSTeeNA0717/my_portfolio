@@ -1,0 +1,15 @@
+dependencies:
+  - openssl11 
+  - openssl11-devel
+  - gcc 
+  - zlib-devel 
+  - bzip2 
+  - bzip2-devel 
+  - readline-devel 
+  - sqlite 
+  - sqlite-devel 
+  - tk-devel 
+  - libffi-devel 
+  - xz-devel
+
+pyenv_root: /home/ec2-user/pyenv_install

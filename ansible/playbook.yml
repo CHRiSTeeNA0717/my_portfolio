@@ -1,0 +1,93 @@
+---
+- name: Read terraform_output.json and save variables
+  hosts: localhost
+  tasks:
+    # Reference for jmespath in ansible: https://www.middlewareinventory.com/blog/ansible-playbook-read-json-file/
+    - name: Display json file content
+      shell: cat ~/workspace/terraform_output.json
+      register: my_output
+
+    - name: debug json file
+      debug: msg="{{ my_output.stdout }}"
+
+    - name: save json data to a variable as a Fact
+      set_fact:
+        jsondata: "{{ my_output.stdout | from_json }}"
+
+    - name: set ALB_dns
+      set_fact:
+        alb_dns: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'ALB_dns.value'
+
+    - name: set EC2_dns
+      set_fact:
+        ec2_dns: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'EC2_dns.value'
+
+    - name: set EC2_ip
+      set_fact:
+        ec2_ip: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'EC2_ip.value'
+
+    - name: set db_host
+      set_fact:
+        db_host: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'db_host.value'
+
+    - name: set db_port
+      set_fact:
+        db_port: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'db_port.value'
+
+    - name: set db_name
+      set_fact:
+        db_name: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'db_name.value'
+
+    - name: set db_username
+      set_fact:
+        db_username: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'db_username.value'
+
+    - name: set db_password
+      set_fact:
+        db_password: "{{ jsondata | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'db_password.value'    
+
+    - name: debug print
+      debug: msg="ec2 ip => {{ ec2_ip}}, ec2 dns => {{ ec2_dns }}, db host => {{ db_host }}, db name => {{ db_name }}"
+
+    - name: Add hosts to group "AWS"
+      ansible.builtin.add_host:
+        name: "{{ ec2_dns }}"
+        group: AWS
+        alb_dns: "{{ alb_dns }}"
+        ec2_dns: "{{ ec2_dns }}"
+        ec2_ip: "{{ ec2_ip }}"
+        app_root: "/var/www/my_app"
+        db_host: "{{ db_host }}"
+        db_name: "{{ db_name }}"
+        db_username: "{{ db_username }}"
+        db_password: "{{ db_password }}"
+
+    - name: add ec2 instance host key to known hosts
+      shell: "ssh-keyscan -H {{ ec2_dns }} >> ~/.ssh/known_hosts"
+
+- name: Provision Django server 
+  hosts: AWS
+  become: yes
+  roles:
+    - { role: git, tags: git }
+    - { role: nginx, tags: nginx }
+    - { role: python3, tags: python3 }
+    - { role: mysql, tags: mysql }
+    - { role: django, tags: django }
+    - { role: uwsgi, tags: uwsgi }

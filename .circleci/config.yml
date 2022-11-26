@@ -1,0 +1,190 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@3.1  # Reference https://medium.com/geekculture/configure-aws-credentials-in-circle-ci-8353d765aa15
+  terraform: circleci/terraform@3.2.0
+  terraform-tflint: hqo/terraform@1.0.3
+  ansible: orbss/ansible-playbook@0.0.5
+
+commands:
+  # This command is used in the job check_by_tflint below
+  install-tflint:
+    description: "Install TFLint"
+    steps:
+      - run:
+          command: wget -P /tmp https://github.com/terraform-linters/tflint/releases/download/v0.38.1/tflint_linux_amd64.zip && unzip /tmp/tflint_linux_amd64.zip -d /usr/local/bin
+
+parameters:
+  backend_dev: 
+    type: string
+    default: "bucket=my-tf-state-backend, key=tf-dev/my-terraform-dev-tl-calculator.tfstate, region=ap-northeast-1"
+  backend_prod:
+    type: string
+    default: "bucket=my-tf-state-backend, key=tf-prod/my-terraform-prod-tl-calculator.tfstate, region=ap-northeast-1"
+
+jobs:
+  check_by_tflint:
+    executor: terraform/default
+    steps:
+      - checkout
+      - install-tflint  # use the command defined above
+      - run: cd terraform/ && terraform init -backend-config="bucket=my-tf-state-backend" -backend-config="key=tf-${ENVIRONMENT}/my-terraform-${ENVIRONMENT}-tl-calculator.tfstate" -backend-config="region=ap-northeast-1"
+      - run: tflint --init && tflint
+
+  terraform_read_output:
+    executor: terraform/default
+    steps:
+      - checkout
+      - run: mkdir -p ~/workspace
+      - run: echo "Your environment is ${ENVIRONMENT}"
+      # <cmd 1> && <cmd 2>: if cmd 1 success, cmd 2 will proceed, and so on
+      - run: cd terraform/ && terraform init -backend-config="bucket=my-tf-state-backend" -backend-config="key=tf-${ENVIRONMENT}/my-terraform-${ENVIRONMENT}-tl-calculator.tfstate" -backend-config="region=ap-northeast-1" && terraform output -json > ~/workspace/terraform_output.json
+      - run: cat ~/workspace/terraform_output.json
+      - persist_to_workspace:
+          root: ~/workspace
+          paths:
+            - terraform_output.json
+
+  ansible_setup:
+    executor: ansible/default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/workspace
+      # add the fingerprint created when adding ssh key in project setting
+      - add_ssh_keys:
+          fingerprints:
+            - 56:ba:e8:3f:c4:cf:1a:b6:9d:d4:2e:55:1a:cd:fa:65
+      # Python in circleCI environment doesn't have jmespath module so we need to install
+      - run: pip install jmespath
+      - ansible/install:
+          version: "2.10.7"
+      - ansible/playbook:
+          playbook: ./ansible/playbook.yml
+          # If ansible.cfg is not included in working dir, all options is required to be stated below
+          # ssh key added via add_ssh_keys above will create a public key file named id_rsa
+          # if the hosts are *, id_rsa is usable
+          playbook-options: "-u ec2-user --private-key ~/.ssh/id_rsa"
+
+
+workflows:
+
+#############################################################################################
+# workflow for production environment
+  deploy_prod:
+    when:
+      equal: [ release, << pipeline.git.branch >> ]
+    jobs:
+      - terraform/validate:
+          checkout: true
+          context: terraform_prod
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_prod >>
+
+      - check_by_tflint:
+          context: terraform_prod
+          requires: 
+            - terraform/validate
+
+      - terraform/plan:
+          checkout: true
+          context: terraform_prod
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_prod >>
+          var_file: env-vars/prod.tfvars
+          var: "db_password=${DB_PASSWORD}"
+          persist-workspace: true
+          requires:
+            - check_by_tflint
+
+      - terraform/apply:
+          attach-workspace: true
+          context: terraform_prod
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_prod >>
+          # terraform/plan with spit out "plan.out" by default
+          # user don't need to re-provide var files
+          plan: plan.out
+          persist-workspace: true
+          requires:
+            - terraform_approve_apply
+
+      - terraform_read_output:
+          context: terraform_prod
+          requires:
+            - terraform/apply
+
+      - ansible_setup:
+          requires:
+            - terraform_read_output
+            
+#############################################################################################
+# workflow for development environment
+  deploy_dev:
+    when: 
+      equal: [ main, << pipeline.git.branch >> ]
+    jobs:
+      - terraform/validate:
+          checkout: true
+          context: terraform_dev
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_dev >>
+
+      - check_by_tflint:
+          context: terraform_dev
+          requires: 
+            - terraform/validate
+
+      - terraform/plan:
+          checkout: true
+          context: terraform_dev
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_dev >>
+          var_file: env-vars/dev.tfvars
+          var: "db_password=${DB_PASSWORD}"
+          persist-workspace: true
+          requires:
+            - check_by_tflint
+
+      - terraform_hold_apply:
+          type: approval
+          requires:
+            - terraform/plan
+
+      - terraform/apply:
+          attach-workspace: true
+          context: terraform_dev
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_dev >>
+          # terraform/plan with spit out "plan.out" by default
+          # user don't need to re-provide var files
+          plan: plan.out
+          persist-workspace: true
+          requires:
+            - terraform_hold_apply
+
+      - terraform_read_output:
+          context: terraform_dev
+          requires:
+            - terraform/apply
+
+      - ansible_setup:
+          requires:
+            - terraform_read_output
+
+# terraform destroy job below is for development purpose
+      - terraform_hold_destroy:
+          type: approval
+          requires:
+            - terraform/apply
+      
+      - terraform/destroy:
+          checkout: true
+          context: terraform_dev
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_dev >>
+          var_file: env-vars/dev.tfvars
+          var: "db_password=${DB_PASSWORD}"
+          requires:
+            - terraform_hold_destroy
+            

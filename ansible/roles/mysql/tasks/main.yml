@@ -1,0 +1,34 @@
+---
+# tasks for mysql
+
+- name: Copy repo of mysql
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+    state: present
+
+# - name: import GPG key before installing mysql
+#   shell: rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+#   changed_when: false
+
+# - name: Install rpm packages required by mysqlclient (disable 5.7 and enable 8.0)
+#   yum:
+#     disablerepo: "mysql*"
+#     enablerepo: mysql180-community
+#     name:
+#       - gcc
+#       - mysql-community-devel
+#       - mysql-community-client
+#     state: present
+
+- name: config mysql version (disable 5.7 and enable 8.0)
+  become: true
+  shell: "{{ item }}"
+  with_items:
+    - yum-config-manager --disable mysql157-community
+    - yum-config-manager --enable mysql180-community
+    - rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+
+- name: install mysql client
+  yum:
+    name: mysql-community-client
+    state: present

@@ -1,0 +1,36 @@
+---
+# tasks for my django app
+
+- name: Create Django project directory
+  file:
+    group: "ec2-user"
+    owner: "ec2-user"
+    path: "{{ app_root }}/"
+    state: directory
+
+- name: Deploy my_app project files
+  copy:
+    dest:   "{{ app_root }}/"
+    src:    "files/{{ app_root }}/"
+    mode: "0755"
+    owner: "ec2-user"
+    group: "ec2-user"
+
+- name: Deploy settings.py
+  template:
+    src: settings.py.j2
+    dest: "{{ app_root }}/tl_calculator_bot/settings.py"
+
+- name: Install dependencies
+  shell: bash -lc "python -m pip install -r requirements.txt"
+  args:
+    chdir: "{{ app_root }}"
+
+- name: Configure app settings
+  shell: bash -lc "{{ item }}"
+  with_items:
+    - python manage.py makemigrations
+    - python manage.py migrate
+    - python manage.py collectstatic
+  args:
+    chdir: "{{ app_root }}"

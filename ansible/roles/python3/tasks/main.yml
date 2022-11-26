@@ -1,0 +1,62 @@
+---
+# tasks file for python3
+
+# install openssl 1.1 together with python 3.10.x
+# Reference: https://blog.serverworks.co.jp/install-python3-with-openssl11
+- name: install dependencies (including openssl 1.1)
+  yum:
+    name: "{{ dependencies }}"
+    state: present
+
+- name: remove openssl to avoid conflict with openssl11
+  yum:
+    name: openssl-devel
+    state: absent
+
+# create dir for pyenv to install
+- file: 
+    state: directory
+    path: "{{ pyenv_root }}"
+
+- name: downlaod pyenv
+  get_url:
+    url: https://pyenv.run
+    dest: "{{ pyenv_root }}/pyenv_install.sh"
+
+- name: change pyenv file mode
+  file:
+    path: "{{ pyenv_root }}/pyenv_install.sh"
+    mode: '0777'
+
+- name: Install pyenv
+  shell: bash -lc "{{ pyenv_root }}/pyenv_install.sh"
+
+- name: add pyenv PATH
+  template:
+    src: pyenv_sys.sh.j2
+    dest: ~/.bash_profile
+    owner: ec2-user
+    group: ec2-user
+
+- name: source pyenv and debug
+  shell: bash -lc "source ~/.bash_profile && pyenv -v"
+  register: result
+- name: Debug pyenv version
+  debug:
+    var: result
+
+- name: install python 3.10.4
+  shell: bash -lc "pyenv install 3.10.4 && pyenv global 3.10.4"
+
+- name: Get python version
+  shell: bash -lc "python --version"
+  register: result
+- name: Debug python installation
+  debug: 
+    var: result
+
+- name: Delete pyenv installer
+  shell: bash -lc "rm -r -f {{ pyenv_root }}"
+
+- name: Upgrade pip
+  shell: bash -lc "python -m pip install --upgrade pip"
