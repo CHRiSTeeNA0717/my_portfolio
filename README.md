@@ -1,5 +1,5 @@
 # 会社寮光熱費計算アプリ
-> [tl-calculator.christeena0717.me](tl-calculator.christeena0717.me)
+> [tl-calculator.christeena0717.me](https://tl-calculator.christeena0717.me)
 
 ## 背景
 - 自分は会社の寮に住んでいます。
@@ -10,9 +10,9 @@
 
 ## 使用ツール
 今回は、完全自動化構築を目指しているため、いくつのツールを使用しました。
-1. CircleCI：   GitHubと連携して、ソースコードを読み込んで、インフラから、アプリ設定まで、構築してくれる
-2. Terraform：  アプリの基盤になるインフラを構築するためのツール、今回はAWSにて構築
-3. Ansible：    リモートで、AWSに作ったEC2にアクセスして、アプリを設定する
+1. [CircleCI](CircleCI)：   GitHubと連携して、ソースコードを読み込んで、インフラから、アプリ設定まで、構築してくれる
+2. [Terraform](Terraform)：  アプリの基盤になるインフラを構築するためのツール、今回はAWSにて構築
+3. [Ansible](Ansible)：    リモートで、AWSに作ったEC2にアクセスして、アプリを設定する
 
 ### CircleCI
 - githubにpushすると、自動的に<code>config.yml</code>を基づいて構築するようになります。
