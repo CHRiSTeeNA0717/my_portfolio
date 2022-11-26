@@ -35,6 +35,7 @@
 
 ## インフラストラクチャー（AWS)
 ### インフラ構成図
+![Environment (my portfolio)](https://user-images.githubusercontent.com/103508472/204108145-12e982d0-0a80-4d03-af4a-d337468af981.jpg)
 
 
 ## アプリ
