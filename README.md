@@ -10,9 +10,9 @@
 
 ## 使用ツール
 今回は、完全自動化構築を目指しているため、いくつのツールを使用しました。
-1. [CircleCI](CircleCI)：   GitHubと連携して、ソースコードを読み込んで、インフラから、アプリ設定まで、構築してくれる
-2. [Terraform](Terraform)：  アプリの基盤になるインフラを構築するためのツール、今回はAWSにて構築
-3. [Ansible](Ansible)：    リモートで、AWSに作ったEC2にアクセスして、アプリを設定する
+1. [CircleCI](README.md#circleci)：   GitHubと連携して、ソースコードを読み込んで、インフラから、アプリ設定まで、構築してくれる
+2. [Terraform](README.md#Terraform)：  アプリの基盤になるインフラを構築するためのツール、今回はAWSにて構築
+3. [Ansible](README.md#Ansible)：    リモートで、AWSに作ったEC2にアクセスして、アプリを設定する
 
 ### CircleCI
 - githubにpushすると、自動的に<code>config.yml</code>を基づいて構築するようになります。
