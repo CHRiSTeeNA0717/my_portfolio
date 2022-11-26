@@ -107,7 +107,7 @@ workflows:
           plan: plan.out
           persist-workspace: true
           requires:
-            - terraform_approve_apply
+            - terraform/plan
 
       - terraform_read_output:
           context: terraform_prod
