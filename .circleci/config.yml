@@ -146,10 +146,10 @@ workflows:
           requires:
             - check_by_tflint
 
-      - terraform_hold_apply:
-          type: approval
-          requires:
-            - terraform/plan
+      # - terraform_hold_apply:
+      #     type: approval
+      #     requires:
+      #       - terraform/plan
 
       - terraform/apply:
           attach-workspace: true
@@ -161,7 +161,8 @@ workflows:
           plan: plan.out
           persist-workspace: true
           requires:
-            - terraform_hold_apply
+            # - terraform_hold_apply
+            - terraform/plan
 
       - terraform_read_output:
           context: terraform_dev
@@ -173,18 +174,18 @@ workflows:
             - terraform_read_output
 
 # terraform destroy job below is for development purpose
-      - terraform_hold_destroy:
-          type: approval
-          requires:
-            - terraform/apply
+      # - terraform_hold_destroy:
+      #     type: approval
+      #     requires:
+      #       - terraform/apply
       
-      - terraform/destroy:
-          checkout: true
-          context: terraform_dev
-          path: ./terraform
-          backend_config: << pipeline.parameters.backend_dev >>
-          var_file: env-vars/dev.tfvars
-          var: "db_password=${DB_PASSWORD}"
-          requires:
-            - terraform_hold_destroy
+      # - terraform/destroy:
+      #     checkout: true
+      #     context: terraform_dev
+      #     path: ./terraform
+      #     backend_config: << pipeline.parameters.backend_dev >>
+      #     var_file: env-vars/dev.tfvars
+      #     var: "db_password=${DB_PASSWORD}"
+      #     requires:
+      #       - terraform_hold_destroy
             
