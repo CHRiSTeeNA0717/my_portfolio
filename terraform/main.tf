@@ -105,11 +105,11 @@ resource "aws_subnet" "private" {
 
 # db subnet group for rds
 resource "aws_db_subnet_group" "my_db_subnet_group" {
-  name       = "my_db_subnet_group"
+  name       = "${var.name}_my_db_subnet_group"
   subnet_ids = [aws_subnet.private[0].id, aws_subnet.private[1].id]
 
   tags = {
-    Name = "${var.name}-subnet-group"
+    Name = "${var.name}-db-subnet-group"
   }
 }
 
