@@ -192,7 +192,7 @@ data "aws_route53_zone" "domain" {
 }
 
 resource "aws_acm_certificate" "terraform_cert" {
-  domain_name       = "tl-calculator.christeena0717.me"
+  domain_name       = "${var.domain_name}"
   validation_method = "DNS"
 
   lifecycle {
@@ -220,7 +220,7 @@ resource "aws_route53_record" "cert_validation" {
 
 resource "aws_route53_record" "alias_record" {
   zone_id = data.aws_route53_zone.domain.zone_id
-  name    = "tl-calculator.christeena0717.me"
+  name    = "${var.domain_name}"
   type    = "A"
 
   alias {
