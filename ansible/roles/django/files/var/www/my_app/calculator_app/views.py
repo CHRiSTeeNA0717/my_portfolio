@@ -72,9 +72,9 @@ def logout(request):
 
 @login_required(login_url='/login/')
 def index(request):
-    electric = Electric.objects.all().values().order_by('date_electric_start')
-    water = Water.objects.all().values().order_by('date_water_start')
-    gas = Gas.objects.all().values().order_by('date_gas_start')
+    electric = Electric.objects.all().values().order_by('-date_electric_start')
+    water = Water.objects.all().values().order_by('-date_water_start')
+    gas = Gas.objects.all().values().order_by('-date_gas_start')
     return render(request, "index.html", context={"electric":electric, "water":water, "gas":gas, "index":"index"})
 
 def register(request):
@@ -110,9 +110,9 @@ def register(request):
 @login_required(login_url='/login/')
 def newinput(request):
     if request.method != "POST":
-        electric = Electric.objects.all().values().order_by('date_electric_start')
-        water = Water.objects.all().values().order_by('date_water_start')
-        gas = Gas.objects.all().values().order_by('date_gas_start')
+        electric = Electric.objects.all().values().order_by('-date_electric_start')
+        water = Water.objects.all().values().order_by('-date_water_start')
+        gas = Gas.objects.all().values().order_by('-date_gas_start')
         return render(request, "newinput.html", context={"electric":electric, "water":water, "gas":gas})
     else:
         if "electric_save" in request.POST:
@@ -256,77 +256,70 @@ def history(request):
     if request.method != "POST":
         return redirect(index)
     else:
+
+        # user search
+        ######################################################################################################################################################
         if "search" in request.POST:
+
+            # If user use search, check which search it is
+            # data => start month | end month
+            # bill type => insert the type of bill to pass it to helper function "calculation_bill" later
             if request.POST["search"] == "電気代検索":
                 data = request.POST["selectElectricMonth"].split("|")
-                try:
-                    date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
-
-                # when the month is abbr and cannot be read by %B, remove the "." at the end of month and read it with %b, 
-                # but SEPT has to be changed to SEP
-                except ValueError:
-                    data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                    date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
-                room = calculate_bill("electric", date_start)
-                # return is at the end of this function
+                bill_type = "electric"
 
             elif request.POST["search"] == "水道代検索":
                 data = request.POST["selectWaterMonth"].split("|")
-                try:
-                    date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
-                except ValueError:
-                    data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                    date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
-                room = calculate_bill("water", date_start)
-                # return is at the end of this function
+                bill_type = "water"
 
             elif request.POST["search"] == "ガス代検索":
                 data = request.POST["selectGasMonth"].split("|")
-                try:
-                    date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
-                except ValueError:
-                    data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                    date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
-                room = calculate_bill("gas", date_start)
-                # return is at the end of this function
+                bill_type = "gas"
+
+            try:
+                date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
+
+            # As HTML abbr is different with Python:
+            # When the month is abbr and cannot be read by %B, remove the "." at the end of month and read it with %b, 
+            # but SEPT has to be changed to SEP
+            except ValueError:
+                data[0] = data[0].split(".")[0] + data[0].split(".")[1]
+                date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
+            room = calculate_bill(bill_type, date_start)
+            # return is at the end of this function            
+        ######################################################################################################################################################
 
         # query for delete
-        elif "electric_del" in request.POST:
-            data = request.POST["selectElectricMonth"].split("|")
+        ######################################################################################################################################################
+        elif "delete" in request.POST:
+
+            # If user use delete, check which delete it is
+            if request.POST["delete"] == "電気代削除":
+                data = request.POST["selectElectricMonth"].split("|")
+                bill_type = "electric"
+                bill_name = "電気"
+
+            elif request.POST["delete"] == "水道代削除":
+                data = request.POST["selectWaterMonth"].split("|")
+                bill_type = "water"
+                bill_name = "水道"
+
+            elif request.POST["delete"] == "ガス代削除":
+                data = request.POST["selectGasMonth"].split("|")
+                bill_type = "gas"
+                bill_name = "ガス"
+            
             try:
                 date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
             except ValueError:
                 data[0] = data[0].split(".")[0] + data[0].split(".")[1]
                 date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
+            
             # call delete bill function
-            delete_bill("electric", date_start)
-            deleted = str(date_start) + "の電気代データは削除されたぞ" 
+            delete_bill(bill_type, date_start)
+            deleted = str(date_start) + "の" + bill_name + "代データは削除されたぞ" 
             return render(request, "inputed.html", context={"deleted":deleted})
-
-        elif "water_del" in request.POST:
-            data = request.POST["selectWaterMonth"].split("|")
-            try:
-                date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
-            except ValueError:
-                data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
-            # call delete bill function
-            delete_bill("water", date_start)
-            deleted = str(date_start) + "の水道代データは削除されたぞ" 
-            return render(request, "inputed.html", context={"deleted":deleted})
-
-        elif "gas_del" in request.POST:
-            data = request.POST["selectGasMonth"].split("|")
-            try:
-                date_start = datetime.datetime.strptime(data[0], '%B %d, %Y').strftime('%Y-%m-%d')
-            except ValueError:
-                data[0] = data[0].split(".")[0] + data[0].split(".")[1]
-                date_start = datetime.datetime.strptime(data[0].upper().replace("SEPT", "SEP"), '%b %d, %Y').strftime('%Y-%m-%d')
-
-            # call delete bill function
-            delete_bill("gas", date_start)
-            deleted = str(date_start) + "のガス代データは削除されたぞ" 
-            return render(request, "inputed.html", context={"deleted":deleted})
+        ######################################################################################################################################################
 
         elif "room_query" in request.POST:
             date_start = request.POST["room_date_start"]
@@ -341,7 +334,7 @@ def history(request):
                 return render(request, "error.html")
 
             # query DB for the rooms within the date range
-            # room has to be dict similar to the what returned by calculate_bill
+            # room has to be a dict similar to what returned by calculate_bill
             room = Room.objects.filter(date_room__range=(date_start, date_end)).values().order_by("date_room")
             for rooms in room:
                 del rooms["amount_electric_id"]
@@ -353,16 +346,17 @@ def history(request):
 
         # this is the end of function
         # read db for user to search and query for
-        electric = Electric.objects.all().values().order_by('date_electric_start')
-        water = Water.objects.all().values().order_by('date_water_start')
-        gas = Gas.objects.all().values().order_by('date_gas_start')
+        electric = Electric.objects.all().values().order_by('-date_electric_start')
+        water = Water.objects.all().values().order_by('-date_water_start')
+        gas = Gas.objects.all().values().order_by('-date_gas_start')
                      
-        # type in context is the search type(electric, water, gas), and cut the 4th and 5th index because we don't need the word 検索(eg: 電気代検索)
-        # this only work if user use those 検索, not delete or room query
+
+        # If user used search, we include the output of start date, end date and total amount of money in context
+        # If user used delete or room query, there is no such output
         if "search" in request.POST:
             
             # get the total amount of the payment for user query
-            total_amount = calculate_total_amount(request.POST["search"][:3], date_start)
+            total_amount = calculate_total_amount(request.POST["search"][:3], date_start)  # the value of "seach" will be like "電気代検索", so we cut the "検索" before passing to the function
    
             context = {"query":room, "total_amount":total_amount, "electric":electric, "water":water, "gas":gas, "month_start":data[0], "month_end":data[1], "type":request.POST["search"][:3]}
         else:
@@ -373,9 +367,9 @@ def history(request):
 @login_required(login_url='/login/')
 def roominput(request):
     if request.method != "POST":
-        electric = Electric.objects.all().values().order_by('date_electric_start')
-        water = Water.objects.all().values().order_by('date_water_start')
-        gas = Gas.objects.all().values().order_by('date_gas_start')
+        electric = Electric.objects.all().values().order_by('-date_electric_start')
+        water = Water.objects.all().values().order_by('-date_water_start')
+        gas = Gas.objects.all().values().order_by('-date_gas_start')
         return render(request, "roominput.html", context={"electric":electric, "water":water, "gas":gas})
     else:
         # check if POST is accessed by clicking the save room data button
