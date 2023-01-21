@@ -176,16 +176,16 @@ workflows:
 # terraform destroy job below is for development purpose
 # TODO: Create a destroy branch to destroy desire branch(master or release)
             
-  # destroy_dev:
-  #   when: 
-  #     equal: [ destroy_dev, << pipeline.git.branch >> ]
-  #   jobs:
-  #     - terraform/destroy:
-  #         checkout: true
-  #         context: terraform_dev
-  #         path: ./terraform
-  #         backend_config: << pipeline.parameters.backend_dev >>
-  #         var_file: env-vars/dev.tfvars
-  #         var: "db_password=${DB_PASSWORD}"
-  #         requires:
-  #           - terraform_hold_destroy
+  destroy_dev:
+    when: 
+      equal: [ destroy_dev, << pipeline.git.branch >> ]
+    jobs:
+      - terraform/destroy:
+          checkout: true
+          context: terraform_dev
+          path: ./terraform
+          backend_config: << pipeline.parameters.backend_dev >>
+          var_file: env-vars/dev.tfvars
+          var: "db_password=${DB_PASSWORD}"
+          requires:
+            - terraform_hold_destroy
