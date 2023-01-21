@@ -187,5 +187,3 @@ workflows:
           backend_config: << pipeline.parameters.backend_dev >>
           var_file: env-vars/dev.tfvars
           var: "db_password=${DB_PASSWORD}"
-          requires:
-            - terraform_hold_destroy
