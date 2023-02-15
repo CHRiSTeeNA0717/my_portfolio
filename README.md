@@ -1,5 +1,6 @@
 # 会社寮光熱費計算アプリ
 > [tl-calculator.christeena0717.me](https://tl-calculator.christeena0717.me)
+> 現在提供停止中
 
 ## 背景
 - 自分は会社の寮に住んでいます。
